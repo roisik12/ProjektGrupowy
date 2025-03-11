@@ -45,36 +45,38 @@ Pobiera dane z **Google Firestore**, a w przyszłości wykorzysta **AI do progno
 ```bash
 git clone https://github.com/TwojeRepozytorium/ProjektGrupowy.git
 cd ProjektGrupowy
-
+```
 ### 2️⃣ Tworzenie środowiska wirtualnego  
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # (Linux/macOS)
 venv\Scripts\activate  # (Windows
-
+```
 ### 3️⃣ Instalacja zależności
 ```bash
 pip install -r requirements.txt
-
+```
 ### 4️⃣ Konfiguracja Firestore
 Pobierz klucz JSON do Firestore (firestore_key.json)
 Umieść go w folderze backend/
 Nie commituj pliku! Dodaj go do .gitignore
-
+```
 ### 5️⃣ Uruchomienie mikroserwisu air-quality-service
 ```bash
 cd backend
 uvicorn air_quality_service.main:app --host 0.0.0.0 --port 8001 --reload
-
+```
 ###📌 Testowanie:
 Swagger UI: http://127.0.0.1:8001/docs
 Sprawdzenie jakości powietrza:
 ```bash
 curl -X GET "http://127.0.0.1:8001/air-quality/Warsaw"
-
+```
 
 ### 👨‍💻 Autorzy
 Maciej Łapiński
+
 Maksymilian Wyszatycki
+
 Filip Pławiński
 

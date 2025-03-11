@@ -1,6 +1,6 @@
 # Ignorowanie wirtualnego środowiska
 venv/
-__pycache__/
+**/__pycache__/
 *.pyc
 .DS_Store
 backend/firestore_key.json

@@ -4,3 +4,4 @@ Aplikacja webowa/mobilna umożliwiająca sprawdzanie jakości powietrza w wybran
 
 Maciej Łapiński
 Maksymilian Wyszatycki
+Filip Pławiński

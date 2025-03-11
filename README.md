@@ -60,13 +60,13 @@ pip install -r requirements.txt
 Pobierz klucz JSON do Firestore (firestore_key.json)
 Umieść go w folderze backend/
 Nie commituj pliku! Dodaj go do .gitignore
-```
+
 ### 5️⃣ Uruchomienie mikroserwisu air-quality-service
 ```bash
 cd backend
 uvicorn air_quality_service.main:app --host 0.0.0.0 --port 8001 --reload
 ```
-###📌 Testowanie:
+### 📌 Testowanie:
 Swagger UI: http://127.0.0.1:8001/docs
 Sprawdzenie jakości powietrza:
 ```bash

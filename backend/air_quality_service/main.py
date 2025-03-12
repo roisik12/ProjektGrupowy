@@ -44,13 +44,19 @@ async def get_air_quality(location: str):
 
         if not data:
             logger.warning(f"Data not found for {location}")
-            raise HTTPException(status_code=404, detail="Data not found")
+            raise HTTPException(status_code=404, detail="Data not found")  # ✅ First error raised here
 
         logger.info(f"Data retrieved for {location}: {data}")
         return {"location": location, "history": data}
+
+    except HTTPException as e:
+        raise e  # ✅ Keep 404 if it was already raised
+
     except Exception as e:
-        logger.error(f"Error fetching data for {location}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Unexpected error fetching data for {location}: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")  # ✅ Only trigger 500 for real errors
+
+
 
 @app.post("/air-quality/{location}")
 async def set_air_quality(location: str, data: AirQualityData):

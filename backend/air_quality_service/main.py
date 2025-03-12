@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 # Get the absolute path of firestore_key.json
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CREDENTIALS_PATH = os.path.join(BASE_DIR, "../firestore_key.json")
+CREDENTIALS_PATH = os.path.join(BASE_DIR, "../../firestore_key.json")
 
 # Set Firestore authentication
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDENTIALS_PATH
@@ -56,32 +56,54 @@ async def get_air_quality(location: str):
 async def set_air_quality(location: str, data: AirQualityData):
     try:
         logger.info(f"Saving air quality data for {location}: {data}")
-        doc_ref = db.collection("air_quality").document(location).collection("history").document(str(uuid4()))
+
+        # Ensure a document exists for the location
+        city_ref = db.collection("air_quality").document(location)
+        city_ref.set({"location": location}, merge=True)  # Creates empty doc if it doesn't exist
+
+        # Store each AQI entry as a new document inside "history" subcollection
+        doc_ref = city_ref.collection("history").document(str(uuid4()))
         doc_ref.set({
             "AQI": data.AQI,
             "last_update": datetime.utcnow().isoformat()
         })
+
         return {"message": f"Data for {location} saved successfully"}
     except Exception as e:
         logger.error(f"Error saving data for {location}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/air-quality/{location}")
-async def delete_air_quality(location: str):
+async def flush_air_quality(location: str):
     try:
-        logger.info(f"Deleting air quality data for {location}")
-        docs = db.collection("air_quality").document(location).collection("history").stream()
+        logger.info(f"Flushing air quality data for {location}...")
 
+        city_ref = db.collection("air_quality").document(location)
+
+        # Fetch the document without using a transaction
+        city_doc = city_ref.get()
+
+        # Check if the city document exists
+        if not city_doc.exists:
+            logger.warning(f"Location {location} not found in Firestore.")
+            raise HTTPException(status_code=404, detail=f"Location {location} not found.")
+
+        # Delete all records in the "history" subcollection
+        history_docs = city_ref.collection("history").stream()
         deleted_count = 0
-        for doc in docs:
+        for doc in history_docs:
             doc.reference.delete()
             deleted_count += 1
 
-        if deleted_count == 0:
-            logger.warning(f"Tried to delete non-existent data for {location}")
-            raise HTTPException(status_code=404, detail="Data not found")
+        # Delete the main city document after deleting history
+        city_ref.delete()
+        deleted_count += 1
 
-        return {"message": f"Deleted {deleted_count} records for {location}"}
+        logger.info(f"Deleted {deleted_count} records for {location}.")
+        return {"message": f"Flushed {deleted_count} records for {location}."}
+    
     except Exception as e:
-        logger.error(f"Error deleting data for {location}: {e}")
+        logger.error(f"Error flushing data for {location}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+

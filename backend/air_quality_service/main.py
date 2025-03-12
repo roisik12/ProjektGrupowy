@@ -4,11 +4,11 @@ import os
 import logging
 from pydantic import BaseModel, Field
 from datetime import datetime
+from uuid import uuid4  # Generate unique document IDs
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
 
 # Get the absolute path of firestore_key.json
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,14 +16,12 @@ CREDENTIALS_PATH = os.path.join(BASE_DIR, "../firestore_key.json")
 
 # Set Firestore authentication
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDENTIALS_PATH
+
 # Initialize FastAPI app
 app = FastAPI()
 
 # Initialize Firestore
 db = firestore.Client()
-
-# FastAPI App
-app = FastAPI()
 
 # Validate AQI values
 class AirQualityData(BaseModel):
@@ -37,15 +35,19 @@ async def root():
 async def get_air_quality(location: str):
     try:
         logger.info(f"Fetching air quality data for {location}")
-        doc_ref = db.collection("air_quality").document(location)
-        doc = doc_ref.get()
+        docs = db.collection("air_quality").document(location).collection("history").stream()
 
-        if not doc.exists:
+        data = []
+        for doc in docs:
+            entry = doc.to_dict()
+            data.append(entry)
+
+        if not data:
             logger.warning(f"Data not found for {location}")
             raise HTTPException(status_code=404, detail="Data not found")
 
-        logger.info(f"Data retrieved for {location}: {doc.to_dict()}")
-        return doc.to_dict()
+        logger.info(f"Data retrieved for {location}: {data}")
+        return {"location": location, "history": data}
     except Exception as e:
         logger.error(f"Error fetching data for {location}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -54,7 +56,7 @@ async def get_air_quality(location: str):
 async def set_air_quality(location: str, data: AirQualityData):
     try:
         logger.info(f"Saving air quality data for {location}: {data}")
-        doc_ref = db.collection("air_quality").document(location)
+        doc_ref = db.collection("air_quality").document(location).collection("history").document(str(uuid4()))
         doc_ref.set({
             "AQI": data.AQI,
             "last_update": datetime.utcnow().isoformat()
@@ -68,14 +70,18 @@ async def set_air_quality(location: str, data: AirQualityData):
 async def delete_air_quality(location: str):
     try:
         logger.info(f"Deleting air quality data for {location}")
-        doc_ref = db.collection("air_quality").document(location)
+        docs = db.collection("air_quality").document(location).collection("history").stream()
 
-        if not doc_ref.get().exists:
+        deleted_count = 0
+        for doc in docs:
+            doc.reference.delete()
+            deleted_count += 1
+
+        if deleted_count == 0:
             logger.warning(f"Tried to delete non-existent data for {location}")
             raise HTTPException(status_code=404, detail="Data not found")
 
-        doc_ref.delete()
-        return {"message": f"Data for {location} deleted successfully"}
+        return {"message": f"Deleted {deleted_count} records for {location}"}
     except Exception as e:
         logger.error(f"Error deleting data for {location}: {e}")
         raise HTTPException(status_code=500, detail=str(e))

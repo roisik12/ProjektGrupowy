@@ -5,7 +5,9 @@ import numpy as np
 import logging
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 # Get the absolute path of firestore_key.json
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CREDENTIALS_PATH = os.path.join(BASE_DIR, "../../firestore_key.json")
@@ -43,11 +45,12 @@ async def predict_air_quality(location: str):
 
         # Convert data into a Pandas DataFrame and sort it by date
         df = pd.DataFrame(data, columns=["last_update", "AQI"])
-        df["timestamp"] = pd.to_datetime(df["last_update"]).astype(np.int64) // 10**9  # Convert to Unix timestamp
+        df["timestamp"] = pd.to_datetime(df["last_update"]).astype(int) // 10**9  # Convert to Unix timestamp
         df = df.sort_values(by="timestamp")  # Ensure chronological order
 
-        # Log the dataset for debugging
-        logger.info(f"Training data for {location}:\n{df}")
+        # Log dataset for debugging
+        print("\n==== TRAINING DATA USED FOR PREDICTION ====")
+        print(df)
 
         # Train a Linear Regression model
         model = LinearRegression()

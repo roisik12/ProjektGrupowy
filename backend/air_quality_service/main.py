@@ -2,10 +2,10 @@ from fastapi import FastAPI, HTTPException
 from google.cloud import firestore
 import os
 import logging
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from uuid import uuid4  # Generate unique document IDs
-
+from typing import Optional
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -24,8 +24,18 @@ app = FastAPI()
 db = firestore.Client()
 
 # Validate AQI values
+
+
 class AirQualityData(BaseModel):
     AQI: int = Field(..., ge=0, le=500, description="Air Quality Index must be between 0 and 500")
+    last_update: Optional[str] = None  # ✅ Allow user to provide `last_update`
+
+    @validator("last_update", pre=True, always=True)
+    def set_last_update(cls, value):
+        """Ensure `last_update` is correctly formatted or set to the current UTC time."""
+        if not value:
+            return datetime.utcnow().isoformat()  # Set current time if missing
+        return value  # Otherwise, use provided timestamp
 
 @app.get("/")
 async def root():
@@ -63,18 +73,22 @@ async def set_air_quality(location: str, data: AirQualityData):
     try:
         logger.info(f"Saving air quality data for {location}: {data}")
 
+        # ✅ `last_update` is now extracted properly from the request
+        last_update = data.last_update
+
         # Ensure a document exists for the location
         city_ref = db.collection("air_quality").document(location)
-        city_ref.set({"location": location}, merge=True)  # Creates empty doc if it doesn't exist
+        city_ref.set({"location": location}, merge=True)  # Prevents overwriting
 
-        # Store each AQI entry as a new document inside "history" subcollection
-        doc_ref = city_ref.collection("history").document(str(uuid4()))
+        # ✅ Store `last_update` properly in Firestore
+        doc_ref = city_ref.collection("history").document()
         doc_ref.set({
             "AQI": data.AQI,
-            "last_update": datetime.utcnow().isoformat()
+            "last_update": last_update  # ✅ Will now store user-provided `last_update`
         })
 
         return {"message": f"Data for {location} saved successfully"}
+    
     except Exception as e:
         logger.error(f"Error saving data for {location}: {e}")
         raise HTTPException(status_code=500, detail=str(e))

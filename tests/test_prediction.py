@@ -1,7 +1,11 @@
 import pytest
 import httpx
+import time
+import random
+from datetime import datetime, timedelta, timezone  
 
 BASE_URL = "http://127.0.0.1:8002"
+AIR_QUALITY_URL = "http://127.0.0.1:8001"
 
 @pytest.fixture
 def test_client():
@@ -18,18 +22,33 @@ def test_predict_no_data(test_client):
     assert "Not enough historical data" in response.json()["detail"]
 
 def test_predict_air_quality(test_client):
-    # Ensure there is data for "Paris" before testing
-    add_data = httpx.post(f"http://127.0.0.1:8001/air-quality/Paris", json={"AQI": 95})
-    assert add_data.status_code == 200
-    add_data = httpx.post(f"http://127.0.0.1:8001/air-quality/Paris", json={"AQI": 115})
-    assert add_data.status_code == 200
-    add_data = httpx.post(f"http://127.0.0.1:8001/air-quality/Paris", json={"AQI": 85})
-    assert add_data.status_code == 200
-    add_data = httpx.post(f"http://127.0.0.1:8001/air-quality/Paris", json={"AQI": 99})
-    assert add_data.status_code == 200
-    add_data = httpx.post(f"http://127.0.0.1:8001/air-quality/Paris", json={"AQI": 95})
-    assert add_data.status_code == 200
+    """Test prediction using random AQI values for TestCity with valid timestamps."""
+    
+    # Generate 5 random AQI values (between 50 and 150) with timestamps spaced by 1 day
+    aqi_values = [random.randint(50, 150) for _ in range(5)]
+    start_time = datetime.now() - timedelta(days=5)  # ✅ Correct
 
-    response = test_client.get(f"{BASE_URL}/predict/Paris")
+    
+
+    # Ensure there is data for "TestCity" before testing
+    for i, aqi in enumerate(aqi_values):
+        last_update = (start_time + timedelta(days=i)).isoformat()
+        add_data = httpx.post(
+            f"{AIR_QUALITY_URL}/air-quality/TestCity",
+            json={"AQI": aqi, "last_update": last_update},
+        )
+        assert add_data.status_code == 200, f"Failed to add AQI data: {add_data.text}"
+
+    # Wait for Firestore to process the data
+    time.sleep(1)
+
+    # Test prediction for "TestCity"
+    response = test_client.get(f"{BASE_URL}/predict/TestCity")
     assert response.status_code == 200, f"Unexpected response: {response.status_code} - {response.text}"
-    assert 0 <= response.json()["predicted_AQI"] <= 500  # Ensure AQI is within valid range
+    
+    predicted_aqi = response.json()["predicted_AQI"]
+    assert 0 <= predicted_aqi <= 500, f"Predicted AQI out of range: {predicted_aqi}"
+
+    # Clean up: Delete "TestCity" data after test
+    delete_data = httpx.delete(f"{AIR_QUALITY_URL}/air-quality/TestCity")
+    assert delete_data.status_code == 200, f"Failed to delete TestCity: {delete_data.text}"

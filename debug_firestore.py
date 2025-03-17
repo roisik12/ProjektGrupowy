@@ -3,7 +3,7 @@ import os
 
 # Set Firestore authentication
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CREDENTIALS_PATH = os.path.join(BASE_DIR, "firestore_key.json")
+CREDENTIALS_PATH = os.path.join(BASE_DIR, "backend/firestore_key.json")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDENTIALS_PATH
 
 # Initialize Firestore

@@ -1,6 +1,13 @@
 # Ignorowanie wirtualnego środowiska
 venv/
 **/__pycache__/
+.pytest_cache/
 *.pyc
 .DS_Store
 firestore_key.json
+start_project.sh
+start_tmux.sh
+firebase_console_key.json
+node_modules/
+package-lock.json
+.env

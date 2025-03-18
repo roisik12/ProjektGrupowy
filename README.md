@@ -67,13 +67,13 @@ firebase_console_key.json – klucz do Firebase Authentication
 
 🔹 Gdzie dodać pliki?
 Umieść je w katalogu backend/:
-
+```bash
 ProjektGrupowy/
 │── backend/
 │   ├── firestore_key.json
 │   ├── firebase_console_key.json
 │   └── ...
-
+```
 📌 Upewnij się, że te pliki są dodane do .gitignore!
 
 

@@ -1,19 +1,20 @@
 # 🌍 ProjektGrupowy – Monitorowanie Jakości Powietrza  
 
-Aplikacja webowa i mobilna umożliwiająca **sprawdzanie jakości powietrza** w wybranych lokalizacjach.  
-Pobiera dane z **Google Firestore**, a w przyszłości wykorzysta **AI do prognozowania zmian jakości powietrza**.  
+Aplikacja webowa umożliwiająca **sprawdzanie jakości powietrza** w wybranych lokalizacjach.  
+Dane pobierane są z **Google Firestore**, a w przyszłości wykorzystamy **AI do prognozowania zmian jakości powietrza**.  
 
 ---
 
 ## 🚀 Technologie  
+
 ### 🔹 Backend (Mikroserwisy)  
-- **FastAPI** – szybkie API w Pythonie  
+- **FastAPI** – szybkie i asynchroniczne API w Pythonie  
 - **Google Firestore** – baza danych NoSQL w chmurze  
-- **Uvicorn** – serwer ASGI do FastAPI  
-- **Pydantic** – walidacja danych w FastAPI  
+- **Uvicorn** – serwer ASGI dla FastAPI  
+- **Pydantic** – walidacja danych wejściowych  
 - **Logging** – monitorowanie działania aplikacji  
 
-### 🔹 Frontend *(do implementacji)*  
+### 🔹 Frontend  
 - **React.js** – aplikacja webowa  
 - **TailwindCSS** – stylowanie interfejsu  
 - **Axios** – pobieranie danych z API  
@@ -27,6 +28,7 @@ Pobiera dane z **Google Firestore**, a w przyszłości wykorzysta **AI do progno
 ---
 
 ## ⚙️ Funkcjonalności  
+
 ✅ **Sprawdzanie aktualnej jakości powietrza** w danym mieście (AQI)  
 ✅ **Dodawanie i przechowywanie danych w Firestore**  
 ✅ **Usuwanie danych o jakości powietrza**  
@@ -36,11 +38,12 @@ Pobiera dane z **Google Firestore**, a w przyszłości wykorzysta **AI do progno
 📌 **Planowane funkcjonalności**:  
 🔜 **Prognozowanie jakości powietrza** na podstawie historycznych danych (AI)  
 🔜 **Integracja z zewnętrznymi API o jakości powietrza**  
-🔜 **Aplikacja mobilna React Native**  
+🔜 **Rozbudowany interfejs w React**  
 
 ---
 
 ## 🛠 Instrukcja uruchomienia backendu  
+
 ### 1️⃣ Klonowanie repozytorium  
 ```bash
 git clone https://github.com/TwojeRepozytorium/ProjektGrupowy.git
@@ -56,10 +59,23 @@ venv\Scripts\activate  # (Windows
 ```bash
 pip install -r requirements.txt
 ```
-### 4️⃣ Konfiguracja Firestore
-Pobierz klucz JSON do Firestore (firestore_key.json)
-Umieść go w folderze backend/
-Nie commituj pliku! Dodaj go do .gitignore
+4️⃣ Konfiguracja Firestore & Firebase
+Projekt wymaga dwóch plików kluczowych, które nie są dostępne w repozytorium:
+
+firestore_key.json – klucz do Google Firestore
+firebase_console_key.json – klucz do Firebase Authentication
+
+🔹 Gdzie dodać pliki?
+Umieść je w katalogu backend/:
+
+ProjektGrupowy/
+│── backend/
+│   ├── firestore_key.json
+│   ├── firebase_console_key.json
+│   └── ...
+
+📌 Upewnij się, że te pliki są dodane do .gitignore!
+
 
 ### 5️⃣ Uruchomienie mikroserwisu air-quality-service
 ```bash
@@ -71,6 +87,48 @@ Swagger UI: http://127.0.0.1:8001/docs
 Sprawdzenie jakości powietrza:
 ```bash
 curl -X GET "http://127.0.0.1:8001/air-quality/Warsaw"
+```
+6️⃣ Uruchomienie mikroserwisu prediction-service
+```bash
+cd backend
+uvicorn prediction_service.main:app --host 0.0.0.0 --port 8002 --reload
+```
+🔹 Testowanie:
+Swagger UI: http://127.0.0.1:8002/docs
+
+Sprawdzenie przewidywanej jakości powietrza:
+
+```bash
+curl -X GET "http://127.0.0.1:8002/predict/Warsaw"
+```
+
+
+🎨 Uruchomienie frontendu (React)
+1️⃣ Instalacja zależności
+```bash
+cd frontend
+npm install
+```
+2️⃣ Uruchomienie aplikacji
+```bash
+npm start
+```
+🔹 Aplikacja będzie dostępna pod adresem:
+http://localhost:3000
+
+🐳 Uruchomienie za pomocą Dockera
+🔹 Budowanie obrazu Dockera:
+```bash
+docker build -t projektgrupowy .
+```
+🔹 Uruchamianie kontenera:
+
+```bash
+docker run -p 8001:8001 -p 8002:8002 projektgrupowy
+```
+🔹 Uruchamianie aplikacji React w kontenerze:
+```bash
+docker run -p 3000:3000 projektgrupowy-frontend
 ```
 
 ### 👨‍💻 Autorzy

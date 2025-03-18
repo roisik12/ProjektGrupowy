@@ -20,3 +20,4 @@ build/
 local_*.env
 dev_*.json
 .firebaserc
+frontend/src/firebaseConfig.json

@@ -13,3 +13,4 @@ package-lock.json
 .env
 .firebaserc
 firebase.json
+frontend/src/firebaseConfig.json

@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 import logging
-from ..database import db
+from ..database import db, get_firestore_client
 from ..models import AirQualityData
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
 @router.get("/air-quality/{location}")
-async def get_air_quality(location: str):
+async def get_air_quality(location: str, db=Depends(get_firestore_client)):
     try:
         logger.info(f"Fetching air quality data for {location}")
         docs = db.collection("air_quality").document(location).collection("history").stream()
@@ -25,6 +26,7 @@ async def get_air_quality(location: str):
     except Exception as e:
         logger.error(f"Error fetching data: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 @router.post("/air-quality/{location}")
 async def set_air_quality(location: str, data: AirQualityData):

@@ -11,6 +11,10 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = FIRESTORE_CREDENTIALS_PATH
 
 db = firestore.Client()
 
+def get_firestore_client():
+    """Return Firestore client instance (for dependency injection in tests)"""
+    return db
+
 def get_air_quality_data(location: str):
     """Retrieve air quality data from Firestore"""
     try:
@@ -28,3 +32,4 @@ def save_air_quality_data(location: str, aqi: int, last_update: str):
     city_ref.set({"location": location}, merge=True)
     doc_ref = city_ref.collection("history").document()
     doc_ref.set({"AQI": aqi, "last_update": last_update})
+

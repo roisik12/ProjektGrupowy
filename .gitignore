@@ -1,4 +1,3 @@
-# Ignorowanie wirtualnego środowiska
 venv/
 **/__pycache__/
 .pytest_cache/
@@ -14,3 +13,28 @@ package-lock.json
 .firebaserc
 firebase.json
 frontend/src/firebaseConfig.json
+firebase_config.json
+venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+backend/firebase_console_key.json
+backend/firestore_key.json
+.coverage
+htmlcov/
+*.log
+pytest_cache/
+cache/
+.env
+*.env
+.vscode/
+.idea/
+.DS_Store
+*.swp
+frontend/node_modules/
+frontend/.env.local
+frontend/.env.production
+frontend/.env.development
+frontend/build/
+backend/__pycache__/

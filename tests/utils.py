@@ -22,8 +22,9 @@ def get_firebase_api_key():
             return config.get("apiKey", None)
     except FileNotFoundError:
         raise RuntimeError("🔥 firebase_config.json not found! Ensure the file exists in the root directory.")
-    
 
+FIREBASE_API_KEY = get_firebase_api_key()
+    
 def get_firebase_token(email: str, password: str):
     """Tworzy testowego użytkownika, loguje go i zwraca poprawny Firebase ID Token"""
     

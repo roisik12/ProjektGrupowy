@@ -21,7 +21,6 @@ build/
 local_*.env
 dev_*.json
 .firebaserc
-frontend/src/firebase.js
 venv/
 __pycache__/
 *.pyc

@@ -1,38 +1,26 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12-slim
+# Stage 1: Build Frontend
+FROM node:18 AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
+COPY frontend ./
+RUN npm run build
 
-# Install required packages: curl, gnupg2, supervisor, and other dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    gnupg2 \
-    supervisor \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js (LTS version, e.g., Node 16)
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set working directory
+# Stage 2: Backend (Python)
+FROM python:3.12 AS backend
 WORKDIR /app
 
-# Copy entire project into the container
-COPY . /app
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Copy backend and frontend build
+COPY backend /app/backend
+COPY supervisord.conf /app/supervisord.conf
+COPY --from=frontend-build /app/frontend/build /app/frontend/build
 
-# Install Node dependencies for the frontend
-WORKDIR /app/frontend
-RUN npm install
-
-# Expose ports used by the services (8001, 8002, 3000)
+# Expose ports
 EXPOSE 8001 8002 3000
 
-# Copy Supervisor configuration into the container
-WORKDIR /app
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Run Supervisor to start all services
-CMD ["supervisord", "-n"]
+# Start everything with Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

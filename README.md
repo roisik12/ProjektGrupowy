@@ -46,7 +46,7 @@ Dane pobierane są z **Google Firestore**, a w przyszłości wykorzystamy **AI d
 
 ### 1️⃣ Klonowanie repozytorium  
 ```bash
-git clone https://github.com/TwojeRepozytorium/ProjektGrupowy.git
+git clone https://github.com/Roisik12/ProjektGrupowy.git
 cd ProjektGrupowy
 ```
 ### 2️⃣ Tworzenie środowiska wirtualnego  

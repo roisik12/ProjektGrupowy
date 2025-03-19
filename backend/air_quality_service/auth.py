@@ -10,7 +10,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "../firebase_console_key.json")
 USING_EMULATOR = "FIREBASE_AUTH_EMULATOR_HOST" in os.environ
 
-# Initialize Firebase Admin SDK
 if not firebase_admin._apps:
     cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
     firebase_admin.initialize_app(cred)

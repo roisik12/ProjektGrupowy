@@ -10,5 +10,4 @@ app.include_router(prediction_router)
 
 @app.get("/")
 async def root():
-    logger.info(" Prediction Service starting up...")
     return {"message": "Prediction Service Running"}

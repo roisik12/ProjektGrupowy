@@ -9,8 +9,6 @@ const Login = () => {
       })
       .then((idToken) => {
         console.log("🔥 Firebase ID Token:", idToken);
-
-        // 🔥 Send token to backend
         fetch("http://127.0.0.1:8001/protected", {
           method: "GET",
           headers: {

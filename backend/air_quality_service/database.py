@@ -7,10 +7,8 @@ logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FIRESTORE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "../firestore_key.json")
 
-# Set Firestore credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = FIRESTORE_CREDENTIALS_PATH
 
-# Initialize Firestore client
 db = firestore.Client()
 
 def get_air_quality_data(location: str):

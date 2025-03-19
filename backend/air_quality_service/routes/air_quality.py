@@ -21,7 +21,7 @@ async def get_air_quality(location: str):
         return {"location": location, "history": data}
 
     except HTTPException as http_exc:
-        raise http_exc # Keep the HTTPException raised
+        raise http_exc
     except Exception as e:
         logger.error(f"Error fetching data: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

@@ -3,7 +3,6 @@ from .routes import air_quality, protected
 
 app = FastAPI()
 
-# Register API routes
 app.include_router(air_quality.router)
 app.include_router(protected.router)
 

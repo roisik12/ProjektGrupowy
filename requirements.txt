@@ -55,3 +55,5 @@ tzdata==2025.1
 uritemplate==4.1.1
 urllib3==2.3.0
 uvicorn==0.34.0
+setuptools>=68.0.0
+wheel>=0.37.0

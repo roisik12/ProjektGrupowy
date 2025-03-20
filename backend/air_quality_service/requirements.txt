@@ -3,3 +3,8 @@ firebase_admin==6.7.0
 protobuf==3.20.3
 pydantic==2.10.6
 uvicorn==0.34.0
+google-cloud-firestore
+google-auth
+google-api-python-client
+setuptools>=68.0.0
+wheel>=0.37.0

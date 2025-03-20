@@ -41,8 +41,3 @@ services:
       - ./frontend/.env.local:/app/frontend/.env.local  # ✅ Mount frontend .env.local
     stdin_open: true
     tty: true
-
-  shared_config:
-    image: busybox
-    volumes:
-      - ./firebase_config.json:/app/firebase_config.json  # ✅ Mount Firebase Config for all services

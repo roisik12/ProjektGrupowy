@@ -4,18 +4,23 @@ FROM node:18
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy frontend dependencies and install them
-COPY frontend/package.json frontend/package-lock.json ./
+# Copy package.json (ignore package-lock.json if missing)
+COPY frontend/package.json ./
+
+# Ensure package-lock.json exists (if missing, create an empty one)
+RUN [ -f package-lock.json ] || echo '{}' > package-lock.json
+
+# Install dependencies
 RUN npm install
 
-# Copy the frontend source code
+# Copy the entire frontend source code AFTER dependencies are installed
 COPY frontend/ ./
 
-# start the frontend (React app)
+# Build the React app (production-ready)
 RUN npm run build
 
 # Expose the frontend port
 EXPOSE 3000
 
-# Start the frontend server
+# Set the default command to start the React development server
 CMD ["npm", "start"]

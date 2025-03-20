@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  air_quality_service:
+    build:
+      context: .
+      dockerfile: backend/air_quality_service/Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./backend/air_quality_service:/app/air_quality_service
+      - ./logs:/logs  # ✅ Mount logs directory
+      - ./backend/firestore_key.json:/app/firestore_key.json  # ✅ Mount Firestore Key
+      - ./backend/firebase_console_key.json:/app/firebase_console_key.json  # ✅ Mount Firebase Console Key
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/firestore_key.json
+
+  prediction_service:
+    build:
+      context: .
+      dockerfile: backend/prediction_service/Dockerfile
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./backend/prediction_service:/app/prediction_service
+      - ./logs:/logs  # ✅ Mount logs directory
+      - ./backend/firestore_key.json:/app/firestore_key.json  # ✅ Mount Firestore Key
+      - ./backend/firebase_console_key.json:/app/firebase_console_key.json  # ✅ Mount Firebase Console Key
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/firestore_key.json
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+      - ./logs:/logs  # ✅ Mount logs directory
+      - ./frontend/.env.local:/app/frontend/.env.local  # ✅ Mount frontend .env.local
+    stdin_open: true
+    tty: true
+
+  shared_config:
+    image: busybox
+    volumes:
+      - ./firebase_config.json:/app/firebase_config.json  # ✅ Mount Firebase Config for all services

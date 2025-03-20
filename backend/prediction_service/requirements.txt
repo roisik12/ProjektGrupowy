@@ -50,3 +50,5 @@ uvicorn==0.34.0
 python-dateutil==2.9.0.post0
 setuptools>=68.0.0
 wheel>=0.37.0
+scikit-learn==1.6.1
+scipy==1.15.2

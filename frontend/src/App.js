@@ -1,12 +1,19 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login";
+import AdminPanel from "./AdminPanel";
+import GuestPage from "./GuestPage";
 
 function App() {
   return (
-    <div>
-      <h1>Welcome to Air Quality App 🌍</h1>
-      <Login />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/guest" element={<GuestPage />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
   );
 }
 

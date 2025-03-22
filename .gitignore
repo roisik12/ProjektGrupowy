@@ -9,6 +9,7 @@ start_tmux.sh
 firebase_console_key.json
 node_modules/
 package-lock.json
+yarn-lock.json
 .env
 .firebaserc
 firebase.json

@@ -7,27 +7,35 @@ import {
   signInWithEmailAndPassword,
 } from "./firebase";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from './AuthProvider';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const fetchUserRole = async (idToken) => {
     try {
-        const res = await fetch("http://localhost:8001/me", {
-            headers: {
-                Authorization: `Bearer ${idToken}`,
-            },
-        });
-        const data = await res.json();
-        console.log("Dane z backendu:", data); // Dodaj logowanie
-        return data.role; // Pobieramy rolę
-    } catch (err) {
-        console.error("❌ Błąd pobierania roli:", err);
+      const res = await fetch("http://localhost:8001/me", {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+      
+      if (res.status === 401) {
+        console.error("Unauthorized: Invalid token or token expired");
         return null;
+      }
+      
+      const data = await res.json();
+      console.log("Dane z backendu:", data);
+      return data.role;
+    } catch (err) {
+      console.error("❌ Błąd pobierania roli:", err);
+      return null;
     }
-};
+  };
 
   const handleGoogleLogin = async () => {
     try {
@@ -39,14 +47,11 @@ const Login = () => {
         return;
       }
 
-      // Pobierz rolę użytkownika z backendu
       const role = await fetchUserRole(idToken);
-
-      // Przekierowanie na podstawie roli
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/guest");
+      
+      if (role) {
+        login(idToken, role);
+        navigate(role === 'admin' ? '/admin' : '/guest');
       }
     } catch (err) {
       console.error("❌ Błąd logowania Google:", err);
@@ -63,14 +68,11 @@ const Login = () => {
         return;
       }
 
-      // Pobierz rolę użytkownika z backendu
       const role = await fetchUserRole(idToken);
-
-      // Przekierowanie na podstawie roli
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/guest");
+      
+      if (role) {
+        login(idToken, role);
+        navigate(role === 'admin' ? '/admin' : '/guest');
       }
     } catch (err) {
       alert("Błędny e-mail lub hasło");
@@ -88,14 +90,11 @@ const Login = () => {
         return;
       }
 
-      // Pobierz rolę użytkownika z backendu
       const role = await fetchUserRole(idToken);
 
-      // Przekierowanie na podstawie roli
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/guest");
+      if (role) {
+        login(idToken, role);
+        navigate(role === 'admin' ? '/admin' : '/guest');
       }
     } catch (err) {
       alert("Nie udało się zarejestrować: " + err.message);

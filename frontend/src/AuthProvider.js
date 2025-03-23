@@ -3,9 +3,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
+  const [token, setToken] = useState(sessionStorage.getItem('token'));
+  const [userRole, setUserRole] = useState(sessionStorage.getItem('userRole'));
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -20,20 +19,19 @@ export const AuthProvider = ({ children }) => {
           if (response.ok) {
             const userData = await response.json();
             setUserRole(userData.role);
-            localStorage.setItem('userRole', userData.role);
+            sessionStorage.setItem('userRole', userData.role);
           } else {
-            // If token is invalid, clear everything
             setToken(null);
             setUserRole(null);
-            localStorage.removeItem('token');
-            localStorage.removeItem('userRole');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('userRole');
           }
         } catch (error) {
           console.error('Token verification failed:', error);
           setToken(null);
           setUserRole(null);
-          localStorage.removeItem('token');
-          localStorage.removeItem('userRole');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('userRole');
         }
       }
     };
@@ -42,15 +40,15 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = (newToken, role) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('userRole', role);
+    sessionStorage.setItem('token', newToken);
+    sessionStorage.setItem('userRole', role);
     setToken(newToken);
     setUserRole(role);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
     setToken(null);
     setUserRole(null);
   };

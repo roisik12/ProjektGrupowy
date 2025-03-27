@@ -34,6 +34,7 @@ def verify_firebase_token(authorization: str = Header(None)):
     except Exception as e:
         logger.error(f"Token Verification Error: {e}")
         raise HTTPException(status_code=401, detail=f"Invalid Firebase token: {e}")
+
 def admin_only(user=Depends(verify_firebase_token)):
     if user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")

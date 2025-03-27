@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from './AuthProvider';
 import TestPanel from "./TestPanel";
-import Unauthorized from "./Unauthorized";
 import { Navigate } from "react-router-dom";
 
 const AdminPanel = () => {

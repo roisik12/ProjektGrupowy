@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from backend.air_quality_service.main import app
 from backend.air_quality_service.database import get_firestore_client
+from .utils import get_firebase_token  # <-- Zaimportuj funkcję do pobierania tokenu
 
 BASE_URL = "http://127.0.0.1:8001"
 
@@ -9,6 +10,11 @@ BASE_URL = "http://127.0.0.1:8001"
 def client():
     """Fixture for FastAPI test client"""
     return TestClient(app)
+
+@pytest.fixture
+def valid_token():
+    """Pobiera token JWT dla testowego użytkownika"""
+    return get_firebase_token("testuser@gmail.com", "Test123!")  # Zmien dane na testowego użytkownika
 
 class MockFirestoreClient:
     """Mock Firestore client that raises an error when trying to fetch data."""
@@ -36,32 +42,30 @@ def test_air_quality_internal_error(client, override_firestore):
 
     assert response.status_code == 500  # ✅ Should return 500 Internal Server Error
     assert "Internal Server Error" in response.text
-def test_air_quality_not_found(client):
+
+def test_air_quality_not_found(client, valid_token):
     """Test: Requesting air quality data for a city that doesn't exist."""
     
-    response = client.get(f"/air-quality/NonExistentCity")
+    response = client.get(f"/air-quality/NonExistentCity", headers={"Authorization": f"Bearer {valid_token}"})
     
     assert response.status_code == 404  # ✅ Should return 404 Not Found
     assert "Data not found" in response.text
 
-
-def test_air_quality_invalid_post(client):
+def test_air_quality_invalid_post(client, valid_token):
     """Test: Sending an invalid payload to POST (missing AQI value)."""
     
-    response = client.post(f"/air-quality/Warsaw", json={})
+    response = client.post(f"/air-quality/Warsaw", json={}, headers={"Authorization": f"Bearer {valid_token}"})
     
     assert response.status_code == 422  # ✅ Should return 422 Unprocessable Entity
     assert "AQI" in response.text  # ✅ Should mention missing AQI
 
-
-def test_air_quality_delete_non_existent(client):
+def test_air_quality_delete_non_existent(client, valid_token):
     """Test: Attempting to delete a non-existent location should still work (idempotency)."""
     
-    response = client.delete(f"/air-quality/NonExistentCity")
+    response = client.delete(f"/air-quality/NonExistentCity", headers={"Authorization": f"Bearer {valid_token}"})
     
-    assert response.status_code == 200  # ✅ Should return 200 even if nothing was deleted
+    assert response.status_code == 200
     assert "Flushed air quality data" in response.text
-
 
 def test_air_quality_invalid_method(client):
     """Test: Sending a PUT request to an endpoint that only supports GET, POST, DELETE."""

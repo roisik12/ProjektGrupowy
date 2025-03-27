@@ -4,7 +4,7 @@ import os
 import json
 import httpx
 
-# Pobierz ścieżkę do klucza Firebase
+# Ścieżki do plików konfiguracyjnych Firebase
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "../firebase_config.json")
 FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "../backend/firebase_console_key.json")
@@ -15,7 +15,7 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 def get_firebase_api_key():
-    """Load Firebase API Key from JSON config file."""
+    """Załaduj Firebase API Key z pliku konfiguracyjnego."""
     try:
         with open(CONFIG_PATH, "r") as config_file:
             config = json.load(config_file)
@@ -24,9 +24,9 @@ def get_firebase_api_key():
         raise RuntimeError("🔥 firebase_config.json not found! Ensure the file exists in the root directory.")
 
 FIREBASE_API_KEY = get_firebase_api_key()
-    
+
 def get_firebase_token(email: str, password: str):
-    """Tworzy testowego użytkownika, loguje go i zwraca poprawny Firebase ID Token"""
+    """Tworzy testowego użytkownika, loguje go i zwraca poprawny Firebase ID Token z rolą admin"""
     
     try:
         # Sprawdź, czy użytkownik już istnieje
@@ -34,6 +34,9 @@ def get_firebase_token(email: str, password: str):
     except:
         # Jeśli nie istnieje, utwórz użytkownika
         user = auth.create_user(email=email, password=password)
+
+    # Przypisz rolę admin do użytkownika
+    auth.set_custom_user_claims(user.uid, {"role": "admin"})
 
     # Generowanie custom tokena
     custom_token = auth.create_custom_token(user.uid).decode("utf-8")

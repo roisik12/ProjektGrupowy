@@ -1,0 +1,79 @@
+/* cityBackground.css */
+
+/*
+  city-background:
+  - pełnoekranowe tło (fixed),
+  - z-index: -10, żeby było za całą aplikacją,
+  - background: gradient (jaśniejsze niebo na górze, ciemniejsze na dole).
+*/
+.city-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -10;
+    pointer-events: none; /* Nie klikalne */
+    background: linear-gradient(to bottom, #b9cde7 0%, #0b1a2e 80%);
+    overflow: hidden;
+  }
+  
+  /* Budynki – w jednym kolorze. 
+     Umieszczamy je na dole. */
+  .buildings {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%; /* wysokość budynków */
+    display: flex;
+    justify-content: space-around; /* rozkładamy budynki */
+    align-items: flex-end;
+  }
+  
+  /* Każdy budynek to kontener z oknami */
+  .building {
+    background-color: #19293f; /* ciemny niebieski */
+    width: 120px;             /* możesz dostosować */
+    height: 100%;            /* wypełnia 30% kontenera (czyli 30% ekranu) */
+    position: relative;
+    display: flex;
+    flex-wrap: wrap; 
+    align-content: flex-start;
+    margin: 0 10px;
+  }
+  
+  /* Okna w budynku:
+     - Domyślnie zlane z tłem (zgaszone),
+     - Po dodaniu .lit => #ffd700,
+     - transition daje efekt płynnego zapalania/gaszenia. */
+  .window {
+    width: 14px;
+    height: 14px;
+    margin: 2px;
+    background-color: #19293f; /* zgaszone */
+    transition: background 1.5s ease-in-out;
+  }
+  .window.lit {
+    background-color: #ffd700;
+  }
+  
+  /* Animacja wiatru nad budynkami */
+  .wind {
+    position: absolute;
+    bottom: 30%; /* tuż nad budynkami */
+    left: 0;
+    width: 200%;  /* 2x szerokość ekranu, by móc przesuwać */
+    height: 60px;
+    background: repeating-linear-gradient(
+      transparent 0 6px, 
+      rgba(255,255,255,0.07) 6px 12px
+    );
+    animation: moveWind 4s linear infinite;
+  }
+  
+  @keyframes moveWind {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  

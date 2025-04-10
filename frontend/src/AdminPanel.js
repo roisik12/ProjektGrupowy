@@ -45,39 +45,38 @@ const AdminPanel = () => {
   };
 
   return (
-    <div>
+    <div className="container fade-in">
+      {/* Nagłówek */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Panel administratora</h1>
-        <button 
+        <h1 className="section-header">Panel administratora</h1>
+        <button
+          className="btn btn-danger"
           onClick={handleLogout}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
         >
           Wyloguj się
         </button>
       </div>
 
-      <h2>Użytkownicy</h2>
-      {users.length > 0 ? (
-        <ul>
-          {users.map((user) => (
-            <li key={user.uid}>
-              <span>{user.email} - {user.role}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No users found</p>
-      )}
-      
-      <TestPanel />
+      {/* Lista użytkowników */}
+      <div className="card slide-in-up">
+        <h2 className="section-header">Użytkownicy</h2>
+        {users.length > 0 ? (
+          <ul>
+            {users.map((user) => (
+              <li key={user.uid}>
+                <span>{user.email} - {user.role}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Brak użytkowników</p>
+        )}
+      </div>
 
+      {/* Panel testowy */}
+      <div className="card fade-in">
+        <TestPanel />
+      </div>
     </div>
   );
 };

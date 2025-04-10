@@ -35,9 +35,9 @@ const TestPanel = () => {
 
   return (
     <div>
-      <h2>🔐 Test Protected Endpoints</h2>
-      <button onClick={handlePost}>POST air quality</button>
-      <button onClick={handleDelete}>DELETE air quality</button>
+      <h2 className="section-header">🔐 Test Protected Endpoints</h2>
+      <button className="btn" onClick={handlePost}>POST air quality</button>
+      <button className="btn btn-danger" onClick={handleDelete}>DELETE air quality</button>
       <pre>{response}</pre>
     </div>
   );

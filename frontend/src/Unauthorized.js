@@ -2,9 +2,9 @@ import React from "react";
 
 const Unauthorized = () => {
   return (
-    <div>
-      <h1>403 Forbidden</h1>
-      <p>You do not have permission to access this page.</p>
+    <div className="container fade-in" style={{ marginTop: '5rem', textAlign: 'center' }}>
+      <h1 className="section-header">403 Forbidden</h1>
+      <p>Nie masz uprawnień do wyświetlenia tej strony.</p>
     </div>
   );
 };

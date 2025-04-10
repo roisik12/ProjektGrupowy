@@ -103,29 +103,41 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Zaloguj się / Zarejestruj</h2>
+    <div className="container fade-in" style={{ maxWidth: '400px', marginTop: '2rem' }}>
+      <h2 className="section-header">Zaloguj się / Zarejestruj</h2>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      /><br />
+      <div className="card" style={{ padding: '1rem' }}>
+        <label>
+          E-mail:
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </label>
 
-      <input
-        type="password"
-        placeholder="Hasło"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      /><br />
+        <label style={{ marginTop: '1rem' }}>
+          Hasło:
+          <input
+            type="password"
+            placeholder="Hasło"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
 
-      <button onClick={handleEmailLogin}>Zaloguj e-mailem</button>
-      <button onClick={handleRegister}>Zarejestruj</button>
+        <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+          <button className="btn" onClick={handleEmailLogin}>Zaloguj e-mailem</button>
+          <button className="btn" onClick={handleRegister}>Zarejestruj</button>
+        </div>
 
-      <hr />
+        <hr style={{ margin: '1rem 0' }} />
 
-      <button onClick={handleGoogleLogin}>Zaloguj przez Google</button>
+        <button className="btn" onClick={handleGoogleLogin}>
+          Zaloguj przez Google
+        </button>
+      </div>
     </div>
   );
 };

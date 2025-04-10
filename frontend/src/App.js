@@ -6,6 +6,7 @@ import GuestPage from "./GuestPage";
 import Unauthorized from "./Unauthorized";
 import { AuthProvider, useAuth } from './AuthProvider';
 
+
 function AppRoutes() {
   const { userRole } = useAuth();
 
@@ -62,8 +63,15 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+       
         <AppRoutes />
       </AuthProvider>
+      
+      
+      <div className="footer-scene">
+        <div className="buildings"></div>
+        <div className="wind"></div>
+      </div>
     </Router>
   );
 }

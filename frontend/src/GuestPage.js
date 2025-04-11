@@ -12,22 +12,19 @@ const GuestPage = () => {
   };
 
   return (
-    <div>
+    <div className="container fade-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>👋 Witaj, gościu!</h1>
-        <button 
+        <h1 className="section-header">👋 Witaj, gościu!</h1>
+        <button
+          className="btn btn-danger"
           onClick={handleLogout}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
         >
           Wyloguj się
         </button>
+      </div>
+
+      <div className="card slide-in-up" style={{ marginTop: '1rem' }}>
+        <p>To jest przykładowa strona przeznaczona dla użytkownika o roli <code>guest</code>.</p>
       </div>
     </div>
   );

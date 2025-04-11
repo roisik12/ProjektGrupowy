@@ -44,3 +44,4 @@ kubeconfig
 backend/pip.conf
 # Docker
 .docker/
+keys.json

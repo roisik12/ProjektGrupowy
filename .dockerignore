@@ -50,7 +50,6 @@ __pycache__
 .Python
 env/
 venv/
-.env
 *.log
 .git
 .gitignore

@@ -6,7 +6,7 @@ const TestPanel = () => {
 
   const handlePost = async () => {
     const token = await getToken();
-    const res = await fetch("http://localhost:8001/air-quality/TestCity", {
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/air-quality/TestCity`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -23,7 +23,7 @@ const TestPanel = () => {
 
   const handleDelete = async () => {
     const token = await getToken();
-    const res = await fetch("http://localhost:8001/air-quality/TestCity", {
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/air-quality/TestCity`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

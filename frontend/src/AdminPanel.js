@@ -12,7 +12,7 @@ const AdminPanel = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:8001/admin/users", {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

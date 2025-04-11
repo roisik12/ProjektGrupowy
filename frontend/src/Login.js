@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PrivacyPolicy from './PrivacyPolicy';
 import {
   auth,
   provider,
@@ -12,12 +13,15 @@ import { useAuth } from './AuthProvider';
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(
+    localStorage.getItem('privacyAccepted') === 'true'
+  );
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const fetchUserRole = async (idToken) => {
     try {
-      const res = await fetch("http://localhost:8001/me", {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/me`, {
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
@@ -101,6 +105,15 @@ const Login = () => {
       console.error("❌ Błąd rejestracji:", err);
     }
   };
+
+  const handlePrivacyAccept = () => {
+    localStorage.setItem('privacyAccepted', 'true');
+    setPrivacyAccepted(true);
+  };
+
+  if (!privacyAccepted) {
+    return <PrivacyPolicy onAccept={handlePrivacyAccept} />;
+  }
 
   return (
     <div>

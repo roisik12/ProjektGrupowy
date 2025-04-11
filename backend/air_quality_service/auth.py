@@ -22,7 +22,7 @@ def verify_firebase_token(authorization: str = Header(None)):
 
     token = authorization.split(" ")[1]
     try:
-        decoded_token = auth.verify_id_token(token)
+        decoded_token = auth.verify_id_token(token, clock_skew_seconds=5)
         logger.info(f"Decoded Token: {decoded_token}")
 
         return {

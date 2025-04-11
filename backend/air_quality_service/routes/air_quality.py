@@ -1,16 +1,20 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 import logging
 from ..database import db, get_firestore_client
 from ..models import AirQualityData
 from ..auth import admin_only, verify_firebase_token as verify_token
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 # GET request: Pobieranie danych o jakości powietrza
 @router.get("/air-quality/{location}")
-async def get_air_quality(location: str, db=Depends(get_firestore_client)):
+@limiter.limit("10/minute")
+async def get_air_quality(request: Request, location: str, db=Depends(get_firestore_client)):
     try:
         logger.info(f"Fetching air quality data for {location}")
         docs = db.collection("air_quality").document(location).collection("history").stream()
@@ -30,7 +34,8 @@ async def get_air_quality(location: str, db=Depends(get_firestore_client)):
 
 # POST request: Zapis danych o jakości powietrza
 @router.post("/air-quality/{location}")
-async def set_air_quality(location: str, data: AirQualityData, user=Depends(admin_only), db=Depends(get_firestore_client)):
+@limiter.limit("5/minute")
+async def set_air_quality(request: Request, location: str, data: AirQualityData, user=Depends(admin_only), db=Depends(get_firestore_client)):
     try:
         logger.info(f"[{user['email']}] is saving AQI data for {location}")
         logger.info(f"Saving air quality data for {location}")

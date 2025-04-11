@@ -1,23 +1,43 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 from firebase_admin import auth
-from ..auth import verify_firebase_token
+from ..auth import verify_firebase_token, admin_only
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 @router.get("/protected")
 async def protected_route(user_data: dict = Depends(verify_firebase_token)):
     return {"message": "This is a protected API!", "user": user_data}
 
 @router.get("/me")
-def get_me(user=Depends(verify_firebase_token)):
-    if not user or "uid" not in user:  # Zamiast "user_id" używamy "uid"
-        raise HTTPException(status_code=401, detail="Błąd autoryzacji: brak user_id")
+@limiter.limit("/minute")
+async def get_me(request: Request, response: Response, user=Depends(verify_firebase_token)):
+    try:
+        if not user or "uid" not in user:
+            # Add cache headers to reduce retries
+            response.headers["Cache-Control"] = "private, no-cache"
+            raise HTTPException(
+                status_code=401, 
+                detail="Invalid Authorization"
+            )
+        
+        # Add cache headers for successful responses
+        response.headers["Cache-Control"] = "private, max-age=30"
+        return user
+        
+    except HTTPException as e:
+        # Return early with cache headers
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"detail": e.detail},
+            headers={"Cache-Control": "private, no-cache"}
+        )
 
-    return user
 @router.get("/admin/users")
-async def get_users(user=Depends(verify_firebase_token)):
-    if user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-
+async def get_users(user=Depends(admin_only)):  # Use admin_only dependency
     try:
         # Pobieramy użytkowników z Firebase Authentication
         users = []

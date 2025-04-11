@@ -1,26 +1,29 @@
-# Use Node.js as the base image
-FROM node:20
+# 🔧 Stage 1 - Build React frontend
+FROM node:20-alpine AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json (ignore package-lock.json if missing)
-COPY frontend/package.json ./
+# ✅ Copy .env.production
+COPY .env.production .env
 
-# Ensure package-lock.json exists (if missing, create an empty one)
-RUN [ -f package-lock.json ] || echo '{}' > package-lock.json
-
-# Install dependencies
+# 📦 Install dependencies
+COPY package*.json ./
 RUN npm install
 
-# Copy the entire frontend source code AFTER dependencies are installed
-COPY frontend/ ./
+# 🧠 Copy application sources
+COPY . .
 
-# Build the React app (production-ready)
+# ⚙️ Build application
 RUN npm run build
 
-# Expose the frontend port
-EXPOSE 3000
+# 🚀 Stage 2 - Deploy via nginx
+FROM nginx:alpine
 
-# Set the default command to start the React development server
-CMD ["npm", "start"]
+# 🔁 Copy built files
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# 📁 Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

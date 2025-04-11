@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routes.prediction import router as prediction_router
+from backend.prediction_service.routes.prediction import router as prediction_router
 import logging
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

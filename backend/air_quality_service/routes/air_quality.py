@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 import logging
-from ..database import db, get_firestore_client
-from ..models import AirQualityData
-from ..auth import admin_only, verify_firebase_token as verify_token
+from backend.air_quality_service.database import db, get_firestore_client # Changed import
+from backend.air_quality_service.models import AirQualityData # Changed import
+from backend.air_quality_service.auth import admin_only, verify_firebase_token as verify_token
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 

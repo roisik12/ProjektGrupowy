@@ -1,0 +1,164 @@
+# Backend Service 1 - Air Quality
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: air-quality-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: air-quality-service
+  template:
+    metadata:
+      labels:
+        app: air-quality-service
+    spec:
+      containers:
+        - name: air-quality-service
+          image: gcr.io/helical-loop-453001-c0/air-quality-service:v4
+          ports:
+            - containerPort: 8001
+          volumeMounts:
+            - name: firebase-service-account
+              mountPath: /secrets
+              readOnly: true
+          env:
+            - name: FIREBASE_CREDENTIALS_PATH
+              value: /secrets/firebase_console_key.json
+            - name: FIRESTORE_CREDENTIALS_PATH
+              value: /secrets/firestore_key.json
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+      volumes:
+        - name: firebase-service-account
+          secret:
+            secretName: firebase-service-accounts
+            items:
+              - key: firestore_key.json
+                path: firestore_key.json
+              - key: firebase_console_key.json
+                path: firebase_console_key.json
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: air-quality-service
+spec:
+  selector:
+    app: air-quality-service
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001
+
+# Backend Service 2 - Prediction
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prediction-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prediction-service
+  template:
+    metadata:
+      labels:
+        app: prediction-service
+    spec:
+      containers:
+        - name: prediction-service
+          image: gcr.io/helical-loop-453001-c0/prediction-service:v1
+          ports:
+            - containerPort: 8002
+          volumeMounts:
+            - name: firebase-service-account
+              mountPath: /secrets
+              readOnly: true
+          env:
+            - name: FIREBASE_CREDENTIALS_PATH
+              value: /secrets/firebase_console_key.json
+            - name: FIRESTORE_CREDENTIALS_PATH
+              value: /secrets/firestore_key.json
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+      volumes:
+        - name: firebase-service-account
+          secret:
+            secretName: firebase-service-accounts
+            items:
+              - key: firestore_key.json
+                path: firestore_key.json
+              - key: firebase_console_key.json
+                path: firebase_console_key.json
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prediction-service
+spec:
+  selector:
+    app: prediction-service
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8002
+
+# Frontend Application
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: gcr.io/helical-loop-453001-c0/frontend:v15
+          envFrom:
+            - configMapRef:
+                name: frontend-env
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

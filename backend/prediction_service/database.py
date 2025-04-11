@@ -5,11 +5,13 @@ from google.cloud import firestore
 logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FIRESTORE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "../firestore_key.json")
+FIRESTORE_CREDENTIALS_PATH = (
+    os.environ.get("FIRESTORE_CREDENTIALS_PATH") or
+    os.path.join(BASE_DIR, "../firestore_key.json")
+)
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = FIRESTORE_CREDENTIALS_PATH
-
-db = firestore.Client()
+# ✅ Utwórz klienta Firestore bez globalnej zmiennej
+db = firestore.Client.from_service_account_json(FIRESTORE_CREDENTIALS_PATH)
 
 def get_history_data(location: str):
     """

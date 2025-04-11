@@ -1,18 +1,27 @@
-# Use Python as the base image
-FROM python:3.12
+# Stage 1 - build dependencies
+FROM python:3.12-slim AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY backend/air_quality_service/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Kopiujemy tylko requirements, żeby cache nie przepadał
+COPY backend/air_quality_service/requirements.txt .
 
-# Copy the air quality service files into the container
-COPY backend/air_quality_service/ ./air_quality_service/
+RUN pip install --upgrade pip \
+ && pip install --cache-dir=/pip_cache -r requirements.txt
 
-# Expose the API port
-EXPOSE 8001
+# Stage 2 - final app
+FROM python:3.12-slim
 
-# Set the default command to start the FastAPI service
-CMD ["uvicorn", "air_quality_service.main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+WORKDIR /app
+
+# Skopiuj zależności
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# 🧠 To jest ważne! Skopiuj cały katalog backend, nie tylko `air_quality_service`
+COPY backend /app/backend
+
+# Dodaj plik main.py do /app jeśli jest wyżej
+COPY backend/air_quality_service/main.py /app/main.py
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]

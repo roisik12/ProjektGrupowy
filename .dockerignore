@@ -43,3 +43,20 @@ firebase_config.json
 
 # 🔹 Ignore Docker overrides
 docker-compose.override.yml
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+*.log
+.git
+.gitignore
+Dockerfile
+.dockerignore
+tests/
+# 🔒 Ignore all credentials
+backend/*.json
+*.json

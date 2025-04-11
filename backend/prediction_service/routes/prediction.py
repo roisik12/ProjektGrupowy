@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException
-from ..database import get_history_data
-from ..predictor import predict_aqi
+from backend.prediction_service.database import get_history_data
+from backend.prediction_service.predictor import predict_aqi
 import pandas as pd
 
 router = APIRouter()

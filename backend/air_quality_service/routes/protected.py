@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from firebase_admin import auth
-from ..auth import verify_firebase_token, admin_only
+from backend.air_quality_service.auth import verify_firebase_token, admin_only
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 

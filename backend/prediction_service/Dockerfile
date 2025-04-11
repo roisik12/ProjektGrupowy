@@ -1,18 +1,33 @@
-# Use Python as the base image
-FROM python:3.12
+# Stage 1 - build dependencies
+FROM python:3.12-slim AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY backend/prediction_service/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the prediction service files into the container
-COPY backend/prediction_service/ ./prediction_service/
+# Copy only requirements first to leverage Docker cache
+COPY backend/prediction_service/requirements.txt .
 
-# Expose the API port
-EXPOSE 8002
+# Upgrade pip and install requirements
+RUN pip install --upgrade pip \
+ && pip install --cache-dir=/pip_cache -r requirements.txt
 
-# Set the default command to start the FastAPI service
-CMD ["uvicorn", "prediction_service.main:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+# Stage 2 - final app
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy application code
+COPY backend/prediction_service /app
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]

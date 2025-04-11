@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: air-quality-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/air-quality
+        pathType: Prefix
+        backend:
+          service:
+            name: air-quality-service
+            port:
+              number: 8001
+      - path: /api/predict
+        pathType: Prefix
+        backend:
+          service:
+            name: prediction-service
+            port:
+              number: 8002
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80

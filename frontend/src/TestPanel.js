@@ -18,7 +18,7 @@ const TestPanel = () => {
       }),
     });
     const data = await res.json();
-    setResponse(JSON.stringify(data));
+    setResponse(JSON.stringify(data, null, 2));
   };
 
   const handleDelete = async () => {
@@ -30,7 +30,7 @@ const TestPanel = () => {
       },
     });
     const data = await res.json();
-    setResponse(JSON.stringify(data));
+    setResponse(JSON.stringify(data, null, 2));
   };
 
   return (

@@ -7,7 +7,12 @@ from fastapi import HTTPException, Header, Depends
 logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "../firebase_console_key.json")
+
+FIREBASE_CREDENTIALS_PATH = (
+    os.environ.get("FIREBASE_CREDENTIALS_PATH") or
+    os.path.join(BASE_DIR, "../firebase_console_key.json")
+)
+
 USING_EMULATOR = "FIREBASE_AUTH_EMULATOR_HOST" in os.environ
 
 if not firebase_admin._apps:
@@ -28,7 +33,7 @@ def verify_firebase_token(authorization: str = Header(None)):
         return {
             "uid": decoded_token.get("uid"),
             "email": decoded_token.get("email"),
-            "role": decoded_token.get("role", "guest"),  # <---- KLUCZOWE
+            "role": decoded_token.get("role", "guest"),
             "token": token
         }
     except Exception as e:

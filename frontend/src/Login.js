@@ -17,6 +17,7 @@ const Login = () => {
     localStorage.getItem('privacyAccepted') === 'true'
   );
   const navigate = useNavigate();
+  console.log("🔍 API BASE URL:", process.env.REACT_APP_API_BASE_URL);
   const { login } = useAuth();
 
   const fetchUserRole = async (idToken) => {

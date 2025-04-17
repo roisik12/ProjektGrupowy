@@ -6,6 +6,7 @@ import AdminPanel from "./AdminPanel";
 import GuestPage from "./GuestPage";
 import Unauthorized from "./Unauthorized";
 import { AuthProvider, useAuth } from './AuthProvider';
+import CityBackground from "./cityBackground"; // 1) IMPORT
 
 
 
@@ -64,11 +65,13 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
+
     <AuthProvider>
       <BackgroundScene />
       <AppRoutes />
     </AuthProvider>
   </Router>
+
   );
 }
 

@@ -1,4 +1,4 @@
-/* theme.css */
+/* =============== theme.css =============== */
 
 /* 
   1) Zmienne (dark blue theme)
@@ -18,21 +18,29 @@
   --font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
 }
 
+/* 
+  2) Resetowanie podstawowe i box-sizing
+*/
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/*
+  3) Podstawowe style dla body/html
+*/
 html, body {
   background-color: var(--color-primary-bg);
   color: var(--color-text);
   font-family: var(--font-family);
   min-height: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Chroni przed przesuwaniem w poziomie */
 }
 
-/* Animacje globalne */
+/*
+  4) Animacje
+*/
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -42,6 +50,9 @@ html, body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/*
+  5) Klasy pomocnicze dla animacji
+*/
 .fade-in {
   animation: fadeIn 0.6s ease-in forwards;
 }
@@ -49,7 +60,9 @@ html, body {
   animation: slideInUp 0.6s ease-in-out forwards;
 }
 
-/* Layout */
+/*
+  6) Layout
+*/
 .container {
   width: 90%;
   max-width: 1100px;
@@ -57,7 +70,9 @@ html, body {
   padding: 2rem;
 }
 
-/* Karty/panele */
+/*
+  7) Sekcje i karty
+*/
 .card {
   background-color: var(--color-secondary-bg);
   border-radius: var(--border-radius);
@@ -66,13 +81,17 @@ html, body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* Nagłówki */
+/*
+  8) Nagłówki
+*/
 .section-header {
   color: var(--color-highlight);
   margin-bottom: 1rem;
 }
 
-/* Listy */
+/*
+  9) Listy
+*/
 ul {
   list-style: none;
   margin: 0;
@@ -82,7 +101,9 @@ li {
   margin-bottom: 0.5rem;
 }
 
-/* Przyciski */
+/*
+  10) Przyciski
+*/
 .btn {
   display: inline-block;
   padding: 10px 20px;
@@ -97,6 +118,8 @@ li {
 .btn:hover {
   background-color: var(--color-accent-hover);
 }
+
+/* Przyciski niebezpieczne/wylogowanie */
 .btn-danger {
   background-color: var(--color-danger);
 }
@@ -104,7 +127,9 @@ li {
   background-color: var(--color-danger-hover);
 }
 
-/* Pola input */
+/*
+  11) Pola tekstowe, inputy
+*/
 input, select, textarea {
   border-radius: var(--border-radius);
   border: 1px solid #ccc;
@@ -115,7 +140,9 @@ input, select, textarea {
   outline: none;
 }
 
-/* Pre-formatka */
+/*
+  12) Styl do <pre>
+*/
 pre {
   background-color: #1a2f4d;
   padding: 1rem;
@@ -124,4 +151,72 @@ pre {
   overflow-x: auto;
   color: #e0f7fa;
   font-size: 0.9rem;
+}
+
+/*
+  13) Animowana scenografia: budynki + wiatr
+*/
+
+/* 
+  Kontener (fixed) z budynkami i wiatrem:
+  - Jest na wierzchu (z-index duży), 
+  - pointer-events: none; by nie klikać w puste miejsca
+*/
+.footer-scene {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* 
+  Budynki - minimalizm:
+  - Tło gradientowe (ciemne pasy) imitujące prostokątne sylwetki
+  - Porusza się w lewo za pomocą animacji
+*/
+.buildings {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 180px;
+  background: 
+    linear-gradient(to top, #0f1c33 0%, #1b2f4c 25%, #1b2f4c 25%, transparent 60%),
+    repeating-linear-gradient(
+      -45deg, 
+      #182c4a 0 25px,
+      #0f1c33 25px 50px
+    );
+  animation: moveBuildings 30s linear infinite;
+}
+
+@keyframes moveBuildings {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* 
+  Wiatr: proste pasy półprzezroczyste
+  - Poruszają się w poziomie nad budynkami
+*/
+.wind {
+  position: absolute;
+  bottom: 120px; /* nieco nad budynkami */
+  left: 0;
+  width: 200%;
+  height: 60px;
+  background: repeating-linear-gradient(
+    transparent 0 6px, 
+    rgba(255,255,255,0.07) 6px 12px
+  );
+  animation: moveWind 4s linear infinite;
+}
+
+@keyframes moveWind {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }

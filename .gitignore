@@ -45,3 +45,4 @@ backend/pip.conf
 # Docker
 .docker/
 keys.json
+kubernetes/*secret*.yaml

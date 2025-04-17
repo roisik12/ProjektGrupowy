@@ -137,8 +137,8 @@ spec:
         - name: frontend
           image: gcr.io/helical-loop-453001-c0/frontend:v15
           envFrom:
-            - configMapRef:
-                name: frontend-env
+            - secretRef:
+                name: frontend-env  # 👈 ważne: Secret, nie ConfigMap
           ports:
             - containerPort: 80
           resources:

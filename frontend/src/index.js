@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';    // dotychczasowy plik stylów
-import './theme.css';    // NOWY import
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

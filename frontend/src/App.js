@@ -1,3 +1,4 @@
+import BackgroundScene from "./BackgroundScene";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login";
@@ -5,6 +6,7 @@ import AdminPanel from "./AdminPanel";
 import GuestPage from "./GuestPage";
 import Unauthorized from "./Unauthorized";
 import { AuthProvider, useAuth } from './AuthProvider';
+
 
 
 function AppRoutes() {
@@ -62,17 +64,11 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-       
-        <AppRoutes />
-      </AuthProvider>
-      
-      
-      <div className="footer-scene">
-        <div className="buildings"></div>
-        <div className="wind"></div>
-      </div>
-    </Router>
+    <AuthProvider>
+      <BackgroundScene />
+      <AppRoutes />
+    </AuthProvider>
+  </Router>
   );
 }
 

@@ -1,0 +1,30 @@
+name: CI Test Pipeline
+
+on:
+  push:
+    branches: [ci-test]  # uruchamia się tylko przy pushu do gałęzi "ci-test"
+  workflow_dispatch:      # można też odpalić ręcznie z GitHub UI
+  # lub lokalnie z `act push`
+
+env:
+  GCP_PROJECT: helical-loop-453001-c0
+  GKE_CLUSTER: air-quality-cluster
+  GKE_ZONE: europe-central2-a
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build frontend image (test only)
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: false  # ❗️NIE pushujemy, tylko budujemy lokalnie
+          tags: frontend:test

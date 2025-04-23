@@ -1,0 +1,59 @@
+# 🔹 Ignore Python virtual environment
+venv/
+
+# 🔹 Ignore unnecessary Node.js files
+frontend/node_modules/
+frontend/build/
+
+# 🔹 Ignore version control files
+.git/
+.gitignore
+
+# 🔹 Ignore IDE settings
+.vscode/
+.idea/
+
+# 🔹 Ignore system files
+.DS_Store
+*.swp
+
+# 🔹 Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🔹 Ignore logs & test coverage
+*.log
+.coverage
+htmlcov/
+pytest_cache/
+cache/
+
+# 🔹 Ignore Firebase configuration files (Don't copy API keys to Docker)
+firestore_key.json
+firebase_console_key.json
+firebase_config.json
+.firebaserc
+
+# 🔹 Ignore Docker overrides
+docker-compose.override.yml
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.log
+.git
+.gitignore
+Dockerfile
+.dockerignore
+tests/
+# 🔒 Ignore all credentials
+backend/*.json
+*.json
+*.env
+!.env.production
+*.json

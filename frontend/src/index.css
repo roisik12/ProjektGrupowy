@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* (opcjonalne - bardzo podstawowe poprawki dla wyglądu) */
+body {
+  @apply bg-primary text-white font-body min-h-screen overflow-x-hidden;
+}

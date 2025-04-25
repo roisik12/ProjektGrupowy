@@ -3,25 +3,25 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# Kopiujemy tylko requirements, żeby cache nie przepadał
+# Copy only requirements first
 COPY backend/air_quality_service/requirements.txt .
 
-RUN pip install --upgrade pip \
- && pip install --cache-dir=/pip_cache -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Stage 2 - final app
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Skopiuj zależności
+# Copy installed packages from builder
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
 
-# 🧠 To jest ważne! Skopiuj cały katalog backend, nie tylko `air_quality_service`
+# Copy application code
 COPY backend /app/backend
-
-# Dodaj plik main.py do /app jeśli jest wyżej
 COPY backend/air_quality_service/main.py /app/main.py
+
+# Set Python path to include backend directory
+ENV PYTHONPATH=/app
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]

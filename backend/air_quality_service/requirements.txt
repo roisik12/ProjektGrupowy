@@ -12,3 +12,4 @@ wheel>=0.37.0
 google-api-core==2.24.2
 APScheduler==3.10.4
 scikit-learn==1.6.1
+httpx==0.28.1

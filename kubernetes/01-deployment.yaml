@@ -7,15 +7,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: air-quality-service
+      app: air-quality-service  # Make sure this matches
   template:
     metadata:
       labels:
-        app: air-quality-service
+        app: air-quality-service  # Make sure this matches
     spec:
       containers:
-        - name: air-quality-service
-          image: gcr.io/helical-loop-453001-c0/air-quality-service:latest
+        - name: air-quality
+          image: gcr.io/helical-loop-453001-c0/air-quality:latest
+          imagePullPolicy: Always  # Add this line
           ports:
             - containerPort: 8001
           volumeMounts:

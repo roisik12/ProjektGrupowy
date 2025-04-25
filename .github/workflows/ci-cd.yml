@@ -74,6 +74,15 @@ jobs:
             gcr.io/${{ env.GCP_PROJECT }}/frontend:latest
             gcr.io/${{ env.GCP_PROJECT }}/frontend:${{ github.sha }}
 
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            gcr.io/${{ env.GCP_PROJECT }}/air-quality:latest
+            gcr.io/${{ env.GCP_PROJECT }}/air-quality:${{ github.sha }}
+
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f kubernetes/

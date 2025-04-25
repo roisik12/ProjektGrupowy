@@ -4,11 +4,14 @@ metadata:
   name: air-quality-ingress
   annotations:
     kubernetes.io/ingress.class: "gce"
+    # Add rewrite annotation to handle paths correctly
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
   - http:
       paths:
-      - path: /api/air-quality
+      # Update API paths to catch all endpoints
+      - path: /api(/|$)(.*)
         pathType: Prefix
         backend:
           service:

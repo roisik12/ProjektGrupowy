@@ -166,3 +166,4 @@ kubectl get ingress
 **Uwaga:**  
 Pamiętaj o odpowiedniej konfiguracji zmiennych środowiskowych i kluczy w środowisku produkcyjnym (np. przez Kubernetes Secrets).
 
+gi

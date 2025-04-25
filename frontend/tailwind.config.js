@@ -50,6 +50,17 @@ module.exports = {
           '100%': { transform: 'translateX(-50%)' },
         },
       },
+      scale: {
+        '102': '1.02',
+      },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+      maxHeight: {
+        '0': '0',
+        '96': '24rem',
+      },
     },
   },
   plugins: [],

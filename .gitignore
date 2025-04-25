@@ -38,12 +38,14 @@ frontend/.env.local
 frontend/.env.development
 frontend/build/
 backend/__pycache__/
-# Kubernetes
+
 kubeconfig
 *.kubeconfig
 backend/pip.conf
-# Docker
+
 .docker/
 keys.json
 kubernetes/*secret*.yaml
-key.json
+backend/openweather_key.json
+openweather_key.json
+

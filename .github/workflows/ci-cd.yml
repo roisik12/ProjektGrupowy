@@ -77,7 +77,8 @@ jobs:
       - name: Build and push Backend image
         uses: docker/build-push-action@v4
         with:
-          context: ./backend
+          context: .  # Change this to repository root
+          file: ./backend/air_quality_service/Dockerfile  # Specify the Dockerfile path
           push: true
           tags: |
             gcr.io/${{ env.GCP_PROJECT }}/air-quality:latest
